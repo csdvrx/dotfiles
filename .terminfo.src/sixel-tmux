@@ -15,19 +15,19 @@
 # rs2=\Ec\E[?1000l\E[?25h, sc=\E7,
 # sgr=%?%p9%t\E(0%e\E(B%;\E[0%?%p6%t;1%;%?%p5%t;2%;%?%p2%t;4%;%?%p1%p3%|%t;7%;%?%p4%t;5%;%?%p7%t;8%;m,
 
-# 256 colors was:
-# colors#0x100,
-# 
 # 16m color was Tc, now obsoleted: use setaf, setab
 # https://github.com/jwilm/alacritty/issues/1485#issue-346291738 
 #
-# using -x for strike through and setrgb custom string (should be setaf, setab)
+# 256 colors was: colors#0x100, but colors#16777216 is not signed 16 bit so use colors#0x100
+# along with setaf setbg to get 256 as fallback for apps not knowing setaf/setab
+#
+# Also using -x for strike through and setrgb custom string (should be setaf, setab)
 # rmxx=\E[29m, smxx=\E[9m,
 # setrgbf=\E[38;2;#1%d;#2%d;#3%dm, setrgbb=\E[48;2;#1%d;#2%d;#3%dm,
 
 sixel-tmux|standalone sixel-tmux with 24 bit colors, BCE, italics and sixel support,
 	am, bce, ccc, km, mir, msgr, xenl,
-        colors#16777216,
+        colors#0x100,
         cols#80, it#8, lines#24, pairs#0x010000,
 	bel=^G, blink=\E[5m, bold=\E[1m, cbt=\E[Z, civis=\E[?25l,
 	clear=\E[H\E[J, cnorm=\E[34h\E[?25h, cr=\r,

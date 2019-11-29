@@ -1,0 +1,4 @@
+tmux-256color-italic|xterm with italic and 256 colors,
+  sitm=\E[3m, ritm=\E[23m,
+  smso=\E[7m, rmso=\E[27m,
+  use=xterm-256color,

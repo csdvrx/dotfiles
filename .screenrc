@@ -1,0 +1,147 @@
+# Autodetach session on hangup instead of terminating screen completely
+autodetach on
+# Keep sending keys to blocked applications
+nonblock on
+
+## this cause the sixel image to be stuck below the prompt
+## Allow bold colors - necessary for some reason
+attrcolor b ".I"
+## Tell screen how to set colors. AB = background, AF=foreground
+#termcapinfo xterm 'Co#256:AB=\E[48;5;%dm:AF=\E38;5;%dm'
+# Use the terminal emulator buffer instead, tell screen it scrolls
+termcapinfo cygwin|xterm|xterms|dtterm|xterm-color|xterm-256color|xs|rxvt|rxvt-unicode-256color ti@:te@
+## Dont scrollback too much: just cache 100k lines
+defscrollback 100000
+## Erase background with current bg color
+defbce "on"
+# Export term as supporting 256 color
+term xterm-256color
+
+# bind Shift+PgUp/PgDn for most terms
+bindkey -m "^[[5;2~" stuff ^b
+bindkey -m "^[[6;2~" stuff ^f
+# bind Alt+PgUp/PgDn for roxterm 
+bindkey -m "^[[5;3~" stuff ^b
+bindkey -m "^[[6;3~" stuff ^f
+# Copy in xterm and aterm
+bindkey ^[[1;5A copy
+bindkey ^[Oa copy
+# Only for OSX terminal.app
+#termcapinfo dtterm|xterm-color ti@:te@
+# Shall login to utmp
+deflogin on
+# Keep using the current background color after clear
+defbce off
+# No automatic switching
+defflow off
+# Don't wait for confirmation when internal window is closed
+#zombie cr
+# Screen saver with cmatrix
+# blankerprg cmatrix -lbas
+# idle 5
+# No message
+startup_message off
+# No flashing screen
+vbell off
+vbell_msg ""
+bell_msg "!!! Ding !!!"
+# No delay
+msgminwait 0
+msgwait 0
+# UTF-8 everywhere
+defutf8 on
+# Replace ctrl-a by ctrl-g to send commands
+escape ^Gg
+# After vi, display back initial content
+altscreen on
+#### Now the shortcuts, with META+number too
+# F1 = previous internal
+bindkey -k k1 prev
+bindkey "\0331" prev
+# Ctrl-Shift-Tab
+#bindkey "^[[27;6;9~" prev
+#bindkey "^[[1;6I" prev
+# Ctrl-PgDn
+bindkey "^[[5;5~" prev
+# Ctrl-arrow left
+#bindkey "^[[1;5D" prev
+# Ctrl-shift-arrow left
+bindkey "^[[1;6D" prev
+# Alt-down
+bindkey "^[[1;3B" prev
+# F2 = next internal
+bindkey -k k2 next
+bindkey "\0332" next
+# Ctrl-Tab
+#bindkey "^[[27;6;9~" prev
+#bindkey "^[[1;5I" next
+# Ctrl-PgDn
+bindkey "^[[6;5~" next
+# Ctrl-arrow right
+#bindkey "^[[1;5C" next
+# Ctrl-shift-arrow right
+bindkey "^[[1;6C" next
+# Ctrl-arrow down
+bindkey "^[[1;5B" next
+# Alt-up
+bindkey "^[[1;3A" next
+# F3 = new internal
+bindkey -k k3 screen
+bindkey "\0333" screen
+bindkey "^[[1;5A" screen
+# Linux F4 = scroll down in mode copy/scrollback
+bindkey -k k4 copy on "\033[[5~"
+bindkey "\0334" copy on "\033[[5~"
+# Linux F5 = scroll up
+bindkey -k k5 copy on "\033[[6~"
+bindkey "\0335" copy on "\033[[6~"
+# Alternative
+bindkey -k k6 eval "copy" "stuff ^U"
+bindkey "\0336" eval "copy" "stuff ^U"
+bindkey -k k7 eval "copy" "stuff ^D"
+# termcapinfo xterm ti@:te@ but bind Shift+PgUp/PgDn
+bindkey "^[[5;2~" eval "copy" "stuff ^U"
+bindkey "^[[6;2~" eval "copy" "stuff ^D"
+# And to Alt-Prior/Next
+bindkey "^[[5;3~" eval "copy" "stuff ^U"
+bindkey "^[[6;3~" eval "copy" "stuff ^D"
+# F8 = rename this window
+# F8 = rename this window
+bindkey -k k8 title
+bindkey "\0336" title
+# bind F11 to rename current screen window
+#bindkey -k k; title
+# F11 = Unicode toggle
+bindkey "\033[23~" utf8
+# F12 = monitor this window
+bindkey "\033[24~" monitor
+bindkey "^[[1;5B" monitor
+# F13 = detach
+#bindkey "\033[25~" detach
+# F14
+#bindkey "\033[26~" split
+# F15
+#bindkey "\033[28~" focus
+# F16
+#bindkey "\033[29~" remove
+
+# To scroll the display
+# Ctrl-g esc then arrows or page up/down
+
+#backtick 1 60 60 /usr/local/bin/screen-uptime.sh
+backtick 2 60 60 ~/bin/status-available.sh
+
+# Replace %l by CPU idle/sustem/user/interrupt stats
+# Since $STY is not set yet when screen sources and %S is not supported yet
+#caption always "%{= kG}[%= %{= kw}%?%-Lw%?%{r}(%{W}%n*%f%t%?(%u)%?%{r})%{w}%?%+Lw%?%?%= %{g}] @screen %2` %l %{= G} %D %c"
+caption always "%{= kG}[%= %{= kw}%?%-Lw%?%{r}(%{W}%n*%f%t%?(%u)%?%{r})%{w}%?%+Lw%?%?%= %{g}] @%H %2` %l %{= G} %D %c"
+#%c %{-}CET"
+
+#screen bash
+#screen -t loadavg 0 ~bin/status-loadavg.sh
+#screen -t slices 1 systemd-cgtop --depth 2 -d 15
+#screen -t htop 2 htop
+#screen -t iotop 3 iotop
+screen -t bash 5 bash
+select 5
+

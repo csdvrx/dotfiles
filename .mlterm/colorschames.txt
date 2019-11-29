@@ -1,0 +1,2 @@
+# changes ~/.mlterm/color but buggy on widowns leaves CR
+python2 mlterm-colors.py -c "Solarized Light.color"

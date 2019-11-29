@@ -1,0 +1,50 @@
+
+##### Run mlterm-menu the default is Control+Button1 
+#Button3="menu:mlterm-menu"
+##### Run mlterm GUI-CONFIGURATOR the default is Control+Button3
+#Control+Button3 = "menu:mlconfig"
+
+#####  Switch conversion mode of m17n library and  kdb  input  methods.
+# Control+a=IM_HOTKEY
+
+##### Control mlterm Screens
+F1=NEXT_SCREEN
+F2=PREV_SCREEN
+F3=HEXPAND_SCREEN
+F4=VEXPAND_SCREEN
+F5="proto:fontsize=10"
+F6="proto:fontsize=12"
+F7="proto:fontsize=14"
+F8="proto:fontsize=16"
+F9="proto:fontsize=18"
+F10="proto:fontsize=20"
+# FIXME: Dynamic font size change not working
+#Control+Plus="proto:fontsize=18"
+#Control+Equal="proto:fontsize=12"
+F11=HSPLIT_SCREEN
+F12=VSPLIT_SCREEN
+# FIXME: Alt+arrows not working, will require AHK
+#Shift+Insert=OPEN_SCREEN
+#Alt+Up=OPEN_PTY
+#Alt+Right=NEXT_PTY
+#Alt+Left=PREV_PTY
+Control+Delete=OPEN_PTY
+Control+Next=NEXT_PTY
+Control+Prior=PREV_PTY
+
+##### Paste Clipboard/primary
+Control+v=INSERT_SELECTION
+# FIXME: mouse paste not working. Very important. Will require AHK to emulate Ctrl-v
+#Shift+Button1=INSERT_SELECTION
+#Shift+Button2=INSERT_SELECTION
+#Button2=INSERT_SELECTION
+
+##### Start backscroll mode
+Shift+Prior=PAGE_UP
+Shift+Next=PAGE_DOWN
+# FIXME: not working, will also require AHK
+#Control+Prior=SCROLL_UP
+#Control+Next=SCROLL_DOWN
+# FIXME: not working either, could be Alt issue at a lower level
+Alt+Prior=SCROLL_UP
+Alt+Next=SCROLL_DOWN

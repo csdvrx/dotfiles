@@ -1,0 +1,41 @@
+bg_color=#ffffd7
+#bg_color=#fcf4dc
+fg_color=#536870
+cursor_bg_color=red
+#cursor_bg_color=#536870
+cursor_fg_color=#eae3cb
+bd_color=#475b62
+it_color=#475b62
+ul_color=#eae3cb
+blink_cursor=true
+
+#box_drawing_font= Tera Special
+fontsize = 16
+use_point_size = true
+geometry = 88x27
+only_use_unicode_font = true
+use_anti_alias = true
+# ligatures not working
+use_combining = true
+use_dynamic_comb = true
+
+# https://bitbucket.org/arakiken/mlterm/raw/tip/doc/en/README.win32
+# on msys2, missing:
+# -I/--icon, --iconpath, -Y/--decsp, -&/--borderless, -d/--display -t/--transbg
+# 
+# name = xterm
+daemon_mode = none
+# startup_screens = no # not working
+use_login_shell = true
+bel_mode = visual
+logsize = 4096
+
+word_separators = " ,;="
+
+scrollbar_mode = none
+# not working
+borderless=true
+use_transbg = true
+#brightness = 10
+fade_ratio = 75
+

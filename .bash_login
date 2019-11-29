@@ -1,0 +1,90 @@
+# ~/.bash_login: executed by bash(1) for login shells.
+
+## You never know, especially with dash
+PATH=$PATH:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+## Short hostname
+#HOST=`/bin/hostname -s 2>/dev/null`
+#if [ "$?" -eq "1" ] ; then
+  HOST=`hostname | sed -e 's/\..*//g'`
+#fi
+## Long hostname
+#HOSTNAME=`/bin/hostname -f`
+## Current tty
+TTY=`tty| sed -e 's/\/dev\///g' -e 's/\///g'`
+## Remote SSH IP for screen and tmux, remove IPv6 extra if necessary
+#REMOTEIP=`echo $SSH_CONNECTION |sed -e 's/::ffff://g' -e 's/ .*//g'`
+#if [ -z $REMOTEIP ] ; then
+#  REMOTEIP="telnet"
+#fi
+
+export HOST HOSTNAME TTY
+#REMOTEIP
+
+# LINUX SPECIFIC FIX
+#if [ -d /run/screen ] ; then chmod 755 /run/screen ; else mkdir /run/screen ; chmod 755 /run/screen ; chgrp utmp /run/screen; fi
+
+##### Run a multiplexer if doing a remote login
+
+# If not running interactively, do not do anything
+#[[ $- != *i* ]] && return
+#[[ -z "$TMUX" ]] && exec tmu
+
+### TMUX LOGIC
+if [ -z "$SSH_CONNECTION" ]; then
+#### If empty, must be local
+### Run the normal aliases and functions
+if [ -f ~/.bashrc ]; then
+        . ~/.bashrc
+fi
+
+else
+#### Must be coming by SSH
+#
+if [ "$TERM" != "tmux" ]; then
+        . ~/.bashrc
+        true
+# By specifying new-session or new, each connected tmux can display
+# a different terminal, otherwise all will switch at the same time
+# tmux attach-session  -t ssh 2>/dev/null || tmux new-session -s ssh
+fi # TERM
+fi # SSH_CONNECTION
+
+##### This was for GNU screen on Mac OSX
+
+#### GNU SCREEN LOGIC
+#if [ -z "$SSH_CONNECTION" ]; then
+#### If empty, must be local
+#
+#if [ "$TERM" != "screen" ]; then
+# if [ "$TERM_PROGRAM" == "Apple_Terminal" ]; then
+#  echo "Terminal.app - no screen launched"
+# elif [ "$TERM_PROGRAM" == "iTerm.app" ]; then
+#  echo "iTerm.app - no screen launched"
+# elif [ "$TERM" == "dumb" ]; then
+#  echo "MacVIM - no screen launched"
+# else
+#  exec /usr/bin/screen -SAaxRR "$TTY"
+# fi
+#fi
+#
+#else
+#### Must be coming by SSH
+#
+#if [ "$TERM" != "screen" ]; then
+## different screen per IP
+## PID=`screen -ls|grep $REMOTEIP|head -n1|sed -e 's/\..*//g' -e 's/^\t*//'g`
+## common screen
+# PID=`screen -ls|grep \(| head -n1|sed -e 's/\..*//g' -e 's/^\t*//'g`
+# if [ -z "$PID" ] ; then
+#   # new session
+#   exec /usr/bin/screen -ln -SAaxRR "$REMOTEIP"
+# else
+#   # reconnect to the common screen
+#   exec /usr/bin/screen -ln -SAaxRR "$PID"
+#   # reconnect to the different screen per IP
+#   #exec /usr/bin/screen -r "$PID.$REMOTEIP"
+# fi
+#fi
+#
+#fi

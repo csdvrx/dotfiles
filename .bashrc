@@ -49,7 +49,8 @@ alias psql="/c/Program\ Files/PostgreSQL/12/bin/psql.exe"
 alias gnuplot="/c/msys64/mingw64/bin/gnuplot"
 ## Common
 alias sixel-check="tput smglr|base64" # check if terminfo ok
-alias sixel-test="echo 'G1BxIjE7MTs5MzsxNCMwOzI7NjA7MDswIzE7MjswOzY2OzAjMjsyOzU2OzYwOzAjMzsyOzQ3OzM4\nOzk3IzQ7Mjs3MjswOzY5IzU7MjswOzY2OzcyIzY7Mjs3Mjs3Mjs3MiM3OzI7MDswOzAjMCExMX4j\nMSExMn4jMiExMn4jMyExMn4jNCExMn4jNSExMn4jNiExMn4jNyExMH4tIzAhMTF+IzEhMTJ+IzIh\nMTJ+IzMhMTJ+IzQhMTJ+IzUhMTJ+IzYhMTJ+IzchMTB+LSMwITExQiMxITEyQiMyITEyQiMzITEy\nQiM0ITEyQiM1ITEyQiM2ITEyQiM3ITEwQhtc' | base64 -d" # check if tmux can be displayed
+alias sixel-test="echo 'G1BxIjE7MTs5MzsxNCMwOzI7NjA7MDswIzE7MjswOzY2OzAjMjsyOzU2OzYwOzAjMzsyOzQ3OzM4\nOzk3IzQ7Mjs3MjswOzY5IzU7MjswOzY2OzcyIzY7Mjs3Mjs3Mjs3MiM3OzI7MDswOzAjMCExMX4j\nMSExMn4jMiExMn4jMyExMn4jNCExMn4jNSExMn4jNiExMn4jNyExMH4tIzAhMTF+IzEhMTJ+IzIh\nMTJ+IzMhMTJ+IzQhMTJ+IzUhMTJ+IzYhMTJ+IzchMTB+LSMwITExQiMxITEyQiMyITEyQiMzITEy\nQiM0ITEyQiM1ITEyQiM2ITEyQiM3ITEwQhtc' | base64 -d"
+alias sixel-test-tmux="sixel-test | __tmux_guard"
 alias vi=vim
 alias ll="ls -lhaF --time-style=long-iso --show-control-chars"
 alias l="ls -lhart --color --time-style=long-iso"
@@ -69,13 +70,16 @@ stty intr ^X -ixon
 ## Set solarized directory colors
 #eval `dircolors $HOME/.dir_colors`
 #eval "`dircolors`"
-eval `SHELL=/usr/bin/bash dircolors $HOME/.dircolors.solarized_256`
+#eval `SHELL=/usr/bin/bash dircolors $HOME/.dircolors.solarized_256`
+# Speed up by avoiding stat
+eval $(cat $HOME/.dircolors.solarized_256 | perl -pe 's/^((CAP|S[ET]|O[TR]|M|E)\w+).*/$1 00/' | dircolors -)
+
 
 ## protect against ^O exec on bracketed paste handling
 bind 'set enable-bracketed-paste on'
 bind -r "\C-o"
 
-## On linux console, remote the virtual terminal on exit if was spawned 
+## On linux console, remote the virtual terminal on exit if was spawned
 #trap "sleep 3 && deallocvt" EXIT
 
 ## Functions
@@ -104,7 +108,7 @@ function __bottom() {
 
 #### Environment exports
 
-## Terminal: remind me if screen is there
+## Terminal: reminder that screen is there
 if [ "$TERM" = "screen" ]; then
  STYLST=`screen -ls |grep \( | sed -e 's/^	//g' -e 's/	.*//g' -e 's/.*\.//g' |tr -s '\n' ' '`
  echo "[ screen is activated ]"
@@ -112,21 +116,21 @@ if [ "$TERM" = "screen" ]; then
 fi
 
 ## Long/Short hostname: not on windows
-#if [ -z "$MINGW_CHOST" ] ; then
-  HOST=`hostname | sed -e 's/\..*//g'`
-#else
-# HOSTNAME=`/bin/hostname -f`
-# HOST=`/bin/hostname -s 2 >/dev/null`
-# if [ "$?" -eq "1" ] ; then
+##if [ -z "$MINGW_CHOST" ] ; then
 #  HOST=`hostname | sed -e 's/\..*//g'`
-# fi
-#fi
+##else
+## HOSTNAME=`/bin/hostname -f`
+## HOST=`/bin/hostname -s 2 >/dev/null`
+## if [ "$?" -eq "1" ] ; then
+##  HOST=`hostname | sed -e 's/\..*//g'`
+## fi
+##fi
 
 ## On a real console, change the title
-if [ -x /usr/local/bin/isatty ] ; then
-#  echo -ne "\e]0;$HOST\007"
-  echo -ne "\e]2;$HOST\a"
-fi
+#if [ -x /usr/local/bin/isatty ] ; then
+##  echo -ne "\e]0;$HOST\007"
+#  echo -ne "\e]2;$HOST\a"
+#fi
 
 ## colorful prompt basic idea: previous error code, user name and directory in color
 # There are no variables, both to keep in mind the monstrosity we are building
@@ -151,6 +155,9 @@ fi
 #PS1='`RETURN=$?; if [ $RETURN != 0 ]; then printf "\[\e[4m\e[3m\e[2m\e[31m\]#%03d:\[\e[39m\]" $RETURN ; else printf "\[\e[4m\e[3m\e[2m\e[39m\e[2;48;2;215;215;175m\]#    \[\e[49m\]" ; fi` \D{%b-%d_%H:%M:%S}\[\e7\e[23m\e[22m\] \u@\h \e[1m\w\[\e[24m\]\n\[\e[3m\e[1m\e[2;48;2;215;215;175m\]# \[\e[0m\]'
 # thin date on mintty
 PS1='`RETURN=$?; if [ $RETURN != 0 ]; then printf "\[\e[4m\e[3m\e[2m\e[31m\e[2;48;2;215;215;175m\]#%03d:\[\e[39m\e[49m\]" $RETURN ; else printf "\[\e[4m\e[3m\e[2m\e[39m\e[2;48;2;215;215;175m\]#    \[\e[49m\]" ; fi`\[\e[38;22;18;89;75m\] \D{%b-%d_%H:%M:%S}\[\e7\e[0m\e[23m\e[22m\] \u@\h \e[1m\w\[\e[24m\]\n\[\e[3m\e[1m\e[2;48;2;215;215;175m\]#\[\e[0m\] '
+
+## If timestamping is not enough, to log root command and sesions:
+# https://superuser.com/questions/175799/does-bash-have-a-hook-that-is-run-before-executing-a-command
 
 # WONTFIX: \033[u (RCP) is not supported by mosh,
 # so instead use ESC 7 for RCP, ESC 8 for SCP
@@ -186,7 +193,7 @@ PS1='`RETURN=$?; if [ $RETURN != 0 ]; then printf "\[\e[4m\e[3m\e[2m\e[31m\e[2;4
 # Monoline version
 #PROMPT_COMMAND='__bottom && export PS0="\e[u\e[1K\r\e[3m\D{---%b-%d_%H:%M:%S---}\e[0m\n" || export PS0="\e[u\e[1T\e[1K\r\e[3m\D{---%b-%d_%H:%M:%S---}\e[0m\n" '
 # Multiline version
-# to have all # in grey and (outside sixel-tmux) a thin date on mintty with \[\e[38;22;18;89;75m\]
+# to have all # in grey and (outside tmux) a thin date with \[\e[38;22;18;89;75m\]
 PROMPT_COMMAND='__bottom && export PS0="\e8\r\e[0m\e[21C\e[0K\e[2m\e[3m\e[4m\[\e[38;22;18;89;75m\D{,%b-%d_%H:%M:%S}\e[0m\n\n\r" || export PS0="\e8\e[2A\r\e[0m\e[21C\e[0K\e[2m\e[3m\e[4m\[\e[38;22;18;89;75m\D{,%b-%d_%H:%M:%S}\e[0m\n\n\r"'
 # to only keep the current prompt in grey
 #PROMPT_COMMAND='__bottom && export PS0="\e8\r\e[0m\e[21C\e[0K\e[2m\e[3m\e[4m\D{,%b-%d_%H:%M:%S}\e[0m\n\r\e[3m\e[2m#\n\e[0m" || export PS0="\e8\e[2A\r\e[0m\e[21C\e[0K\e[2m\e[3m\e[4m\D{,%b-%d_%H:%M:%S}\e[0m\n\r\e[3m\e[2m#\n\e[0m"'
@@ -196,8 +203,7 @@ PROMPT_COMMAND='__bottom && export PS0="\e8\r\e[0m\e[21C\e[0K\e[2m\e[3m\e[4m\[\e
 #PS0='`if [ $COMP_LINE ] ; printf "\e8xxxxxxxxx" fi`'
 #PS0="`if [ $COMP_LINE ] ; printf "\e8\e[2K"; fi`"
 
-export PS1 PS0 USERNAME ENV EDITOR VISUAL HISTCONTROL CLICOLOR PAGER LS_OPTIONS LANG LC_ALL LESS
-USERNAME=`whoami`
+#USERNAME=`whoami`
 ENV=$HOME/.bashrc
 PATH=$PATH:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:~/bins
 HISTCONTROL=ignoredups
@@ -216,7 +222,7 @@ LS_OPTIONS='--color=auto'
 #LANG=en_EN.utf-8
 LANG=C.UTF-8
 LC_ALL=C.UTF-8
-export PS0 PS1 USERNAME ENV PATH EDITOR HISTCONTROL HISTSIZE HISTFILESIZE CLICOLOR GNUTERM PAGER LESS EDITOR VISUAL LS_OPTIONS LANG LC_ALL
+export PS0 PS1 ENV PATH EDITOR HISTCONTROL HISTSIZE HISTFILESIZE CLICOLOR GNUTERM PAGER LESS EDITOR VISUAL LS_OPTIONS LANG LC_ALL
 
 ## Perl and Oracle
 #PERL5LIB=~/perl/:~/perl/lib/perl5/site_perl
